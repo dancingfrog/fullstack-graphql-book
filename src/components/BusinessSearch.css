@@ -1,0 +1,19 @@
+.App h1 {
+    line-height: 6em;
+}
+
+.App h2 {
+    line-height: 4em;
+}
+
+.App h3 {
+    line-height: 3em;
+}
+
+.App h4, .App h5, .App h6 {
+    line-height: 2em;
+}
+
+.App form label {
+    margin: 6px;
+}
