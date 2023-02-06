@@ -19,7 +19,7 @@ const businesses = [
         address: "723 California Dr",
         city: "Burlingame",
         category: "Restaurant",
-    },
+    }
 ];
 
 export default businesses;

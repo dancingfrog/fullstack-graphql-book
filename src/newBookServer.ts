@@ -1,11 +1,11 @@
-require('dotenv').config();
+import { Neo4jGraphQL } from '@neo4j/graphql';
+import { ApolloServer } from "apollo-server";
 
 const neo4j = require('neo4j-driver');
-import {Neo4jGraphQL} from '@neo4j/graphql';
-
-import {ApolloServer} from "apollo-server";
 
 const { gql } = require('apollo-server');
+const env = require('dotenv');
+env.config();
 
 const typeDefs = gql`
   type Book {
@@ -22,7 +22,7 @@ const driver = neo4j.driver(
     ),
 );
 
-function context({ event, context }: { event: any, context: any }): any {
+function context ({ event, context }: { event: any, context: any }): any {
 
     return ({
         event,
@@ -31,7 +31,7 @@ function context({ event, context }: { event: any, context: any }): any {
     });
 }
 
-export async function newServer(): Promise<ApolloServer> {
+export async function newServer (): Promise<ApolloServer> {
 
     // @ts-ignore
     const schema = await (new Neo4jGraphQL({
