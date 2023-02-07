@@ -1,6 +1,7 @@
 *.bak
 *.env*
 *.idea
+*-lock.json
 
 .R*
 *.Rproj*
@@ -62,7 +63,6 @@ build
 dist
 logs
 node_modules
-src/data
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
