@@ -4,7 +4,7 @@ import { newServer } from "./newBusinessServer";
 
     (await newServer())
         .listen().then(({ url }) => {
-        console.log(`🚀 Server ready at ${url}`);
-    });
+            console.log(`🚀 GraphQL server is ready at ${url}`);
+        });
 
 })();
