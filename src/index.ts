@@ -4,7 +4,7 @@ import { newServer } from "./newBusinessServer";
 
     (await newServer())
         .listen().then(({ url }) => {
-        console.log(`🚀 Server ready at ${url}`);
+        console.log(`🚀 @neo4j/graphql server is ready at ${url}`);
     });
 
 })();

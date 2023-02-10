@@ -1,36 +1,11 @@
 import { ApolloServer } from "apollo-server";
-// import { newServer } from "../../src/newBookServer";
-// import {
-//     CREATE_BOOKS_OUTPUT,
-//     CREATE_BOOKS_PARAMS,
-//     CREATE_BOOKS_MUTATION } from "../data/createBooks";
 import { newServer } from "../../src/newBusinessServer";
+import {
+    CREATE_BIZ_MUTATION,
+    CREATE_BIZ_PARAMS,
+    CREATE_BIZ_OUTPUT } from "../data/createBusiness";
 
 const test = require('ava');
-
-// test('createBooks', async (t: any) => {
-//
-//     const server: ApolloServer = await newServer()
-//
-//     console.log('starting...')
-//     let result: any
-//     try {
-//         result = await server.executeOperation({
-//             query: CREATE_BOOKS_MUTATION,
-//             variables: CREATE_BOOKS_PARAMS,
-//         });
-//     } catch (error) {
-//         console.log(error)
-//     }
-//
-//     t.true(!result.errors);
-//
-//     t.deepEqual(
-//         // @ts-ignore
-//         result.data.createBooks,
-//         CREATE_BOOKS_OUTPUT
-//     );
-// });
 
 test('createBusinesses', async (t: any) => {
 
@@ -40,18 +15,29 @@ test('createBusinesses', async (t: any) => {
     let result: any
     try {
         result = await server.executeOperation({
-            query: CREATE_BOOKS_MUTATION,
-            variables: CREATE_BOOKS_PARAMS,
+            query: CREATE_BIZ_MUTATION,
+            variables: CREATE_BIZ_PARAMS,
         });
     } catch (error) {
         console.log(error)
     }
 
-    t.true(!result.errors);
+    if (result.hasOwnProperty("errors") && !!result.errors) {
+        console.log("Errors in result: ", result);
+        t.true(!result.errors);
+    }
 
+    // Check create result
     t.deepEqual(
         // @ts-ignore
-        result.data.createBooks,
-        CREATE_BOOKS_OUTPUT
+        result.data["createBusinesses"],
+        CREATE_BIZ_OUTPUT["createBusinesses"]
+    );
+
+    // Check update result
+    t.deepEqual(
+        // @ts-ignore
+        result.data["updateBusinesses"],
+        CREATE_BIZ_OUTPUT["updateBusinesses"]
     );
 });

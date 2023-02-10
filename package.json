@@ -30,13 +30,14 @@
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "ava": "^5.1.1",
+    "cross-env": "^7.0.3",
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "start": "npm run ts src/index.ts",
-    "test": "npm run test:integration",
+    "start": "bash.exe neo4j-local-db.sh && npm run ts src/index.ts",
+    "test": "bash.exe neo4j-local-db.sh && npm run test:integration",
     "test:integration": "ava --config integration-tests.config.cjs",
     "test:unit": "ava",
-    "ts": "npm install ts-node && ts-node"
+    "ts": "npm install cross-env ts-node && cross-env DEBUG=@neo4j/graphql:* ts-node"
   }
 }

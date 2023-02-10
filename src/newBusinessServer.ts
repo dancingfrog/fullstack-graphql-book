@@ -1,6 +1,7 @@
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { ApolloServer } from "apollo-server";
 import { db } from "./data/mockBusinessDB";
+import { Context } from "@apollo/client";
 
 const neo4j = require('neo4j-driver');
 
@@ -24,78 +25,82 @@ function getContextWithDB (context: any) {
 const resolvers = {
     Query: {
         allBusinesses: (obj: any, args: any, context: any, info: any) => {
+            console.log("allBusinesses resolver: ", obj);
             return (getContextWithDB(context)).db.businesses;
         },
         // businessesAggregate: {},
-        businessBySearchTerm: (obj: any, args: any, context: any, info: any) => {
-            const compare = (a: any, b: any) => {
-                const [orderField, order] = args.orderBy.split("_");
-                const left = a[orderField],
-                    right = b[orderField];
-
-                if (left < right) {
-                    return order === "asc" ? -1 : 1;
-                } else if (left > right) {
-                    return order === "desc" ? -1 : 1;
-                } else {
-                    return 0;
-                }
-            };
-            return (getContextWithDB(context)).db.businesses
-                .filter((v: any) => {
-                    return v["name"].indexOf(args.search) !== -1;
-                })
-                .slice(args.offset, args.first)
-                .sort(compare);
-        }
+        // businessBySearchTerm: (obj: any, args: any, context: any, info: any) => {
+        //     const compare = (a: any, b: any) => {
+        //         const [orderField, order] = args.orderBy.split("_");
+        //         const left = a[orderField],
+        //             right = b[orderField];
+        //
+        //         if (left < right) {
+        //             return order === "asc" ? -1 : 1;
+        //         } else if (left > right) {
+        //             return order === "desc" ? -1 : 1;
+        //         } else {
+        //             return 0;
+        //         }
+        //     };
+        //     /* TODO: What's the best way to filter/sort the following vector? */
+        //     return (getContextWithDB(context)).db.businesses
+        //         .filter((v: any) => {
+        //             return v["name"].indexOf(args.search) !== -1;
+        //         })
+        //         .slice(args.offset, args.first)
+        //         .sort(compare);
+        // }
     },
     Business: {
-        averageStars: (obj: any, args: any, context: any, info: any) => {
-            const reviews = obj.reviewIds.map((v: any) => {
-                return (getContextWithDB(context)).db.reviews.find((review: any) => {
-                    return review.reviewId === v;
-                });
-            });
-
-            return (
-                reviews.reduce((acc: any, review: any) => {
-                    return acc + review.stars;
-                }, 0) / reviews.length
-            );
-        },
-        reviews: (obj: any, args: any, context: any, info: any) => {
-            return obj.reviewIds.map((v: any) => {
-                return (getContextWithDB(context)).db.reviews.find((review: any) => {
-                    return review.reviewId === v;
-                });
-            });
-        },
+        // averageStars: (obj: any, args: any, context: any, info: any) => {
+        //     console.log("averageStarts resolver: ", obj);
+        //
+        //     const reviews = obj.reviewIds.map((v: any) => {
+        //         return (getContextWithDB(context)).db.reviews.find((review: any) => {
+        //             return review.reviewId === v;
+        //         });
+        //     });
+        //
+        //     return (
+        //         reviews.reduce((acc: any, review: any) => {
+        //             return acc + review.stars;
+        //         }, 0) / reviews.length
+        //     );
+        // },
+        // reviews: (obj: any, args: any, context: any, info: any) => {
+        //     return obj.reviewIds.map((v: any) => {
+        //         return (getContextWithDB(context)).db.reviews.find((review: any) => {
+        //             return review.reviewId === v;
+        //         });
+        //     });
+        // },
         waitTime: (obj: any, args: any, context: any, info: any) => {
             const options = [0, 5, 10, 15, 30, 45];
             return options[Math.floor(Math.random() * options.length)];
         }
     },
-    Review: {
-        user: (obj: any, args: any, context: any, info: any) => {
-            return (getContextWithDB(context)).db.users.find((user: any) => {
-                return user.userId === obj.userId;
-            });
-        },
-        business: (obj: any, args: any, context: any, info: any) => {
-            return (getContextWithDB(context)).db.businesses.find((b: any) => {
-                return b.businessId === obj.businessId;
-            });
-        },
-    },
-    User: {
-        reviews: (obj: any, args: any, context: any, info: any) => {
-            return obj.reviewIds.map((v: any) => {
-                return (getContextWithDB(context)).db.reviews.find((review: any) => {
-                    return review.reviewId === v;
-                });
-            });
-        }
-    }
+    // Review: {
+    //     // user: (obj: any, args: any, context: any, info: any) => {
+    //     //     return (getContextWithDB(context)).db.users.find((user: any) => {
+    //     //         return user.userId === obj.userId;
+    //     //     });
+    //     // },
+    //     // business: (obj: any, args: any, context: any, info: any) => {
+    //     //     return (getContextWithDB(context)).db.businesses.find((b: any) => {
+    //     //         return b.businessId === obj.businessId;
+    //     //     });
+    //     // },
+    // },
+    // User: {
+    //     // reviews: (obj: any, args: any, context: any, info: any) => {
+    //     //     return obj.reviewIds.map((v: any) => {
+    //     //         return (getContextWithDB(context)).db.reviews.find((review: any) => {
+    //     //             return review.reviewId === v;
+    //     //         });
+    //     //     });
+    //     // }
+    // }
 };
 
 const typeDefs = gql`
@@ -184,13 +189,16 @@ const driver = neo4j.driver(
     ),
 );
 
-function context ({ event, context }: { event: any, context: any }): any {
+function context (context: { req: any /*Request*/, res: any /*Response*/ }): Context {
 
-    return ({
-        event,
-        context,
+    // console.log("contextHandler received: ", context);
+
+    return (<Context>( !!context ? {
+        ...context,
         driver
-    });
+    } : {
+        driver
+    }));
 }
 
 export async function newServer (): Promise<ApolloServer> {

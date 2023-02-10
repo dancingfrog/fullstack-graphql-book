@@ -2,6 +2,7 @@
 *.env*
 *.idea
 *-lock.json
+neo4j-local-db
 
 .R*
 *.Rproj*
