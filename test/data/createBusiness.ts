@@ -2,16 +2,22 @@ export const CREATE_BIZ_MUTATION = `
 mutation (
   $businessIdInput: ID,
   $categoryInput: String,
-  $createBusinessesInput: [BusinessCreateInput!]!
+  $createCategoryInput: [CategoryCreateInput!]!
 ) {
-  createBusinesses (input: $createBusinessesInput) {
-    businesses {
-      businessId,
-      name,
-      address,
-      city
+  createCategories(input: $createCategoryInput) {
+    categories {
+      name
+      businesses {
+        businessId,
+        name,
+        address,
+        city
+      }
     }
-  }
+    info {
+      nodesCreated
+    }
+  } 
   updateBusinesses (
     where: { businessId: $businessIdInput }
     connect: { categories: { where: { node: { name: $categoryInput }}}}
@@ -22,46 +28,93 @@ mutation (
         name
       }
     }
+    info {
+      relationshipsCreated
+    }
+  }
+  deleteBusinesses (
+    where: { businessId: $businessIdInput }
+  ) {
+    nodesDeleted
+  }
+  deleteCategories (
+    where: { name: $categoryInput }
+  ) {
+    nodesDeleted
   }
 }
 `
 
+const businessIdInput = "b10";
+const categoryInput = "Gas";
+const businessName = "76 Station";
+const businessAddress = "3500 S Centinela Ave, Los Angeles, CA 90066";
+const businessCity = "Los Angeles";
+const businessLocation = { "latitude": 34.0114279, "longitude": -118.4375091, "height": 18.04 };
+const businessState = "CA";
+
 export const CREATE_BIZ_PARAMS = {
-    "businessIdInput": "b10",
-    "categoryInput": "Car Wash",
-    "createBusinessesInput": [
+    "businessIdInput": businessIdInput,
+    "categoryInput": categoryInput,
+    "createCategoryInput": [
         {
-            "businessId": "b10",
-            "name": "76 Station",
-            "address": "3500 S Centinela Ave, Los Angeles, CA 90066",
-            "city": "Los Angeles",
-            "state": "CA",
-            "location": { "latitude": 34.0114279, "longitude": -118.4375091, "height": 18.04 }
+            "name": categoryInput,
+            "businesses": {
+                "create": [
+                    {
+                        "node": {
+                            "businessId": businessIdInput,
+                            "name": businessName,
+                            "address": businessAddress,
+                            "city": businessCity,
+                            "state": businessState,
+                            "location": businessLocation
+                        }
+                    }
+                ]
+            }
         }
     ]
 }
 
-export const CREATE_BIZ_OUTPUT = {
-    "createBusinesses": {
-        "businesses": [
+export const CREATE_BIZ_CAT_OUTPUT = {
+    "createCategories": {
+        "categories": [
             {
-                "businessId": "b10",
-                "name": "76 Station",
-                "address": "3500 S Centinela Ave, Los Angeles, CA 90066",
-                "city": "Los Angeles"
+                "name": categoryInput,
+                "businesses": [
+                    {
+                        "businessId": businessIdInput,
+                        "name": businessName,
+                        "address": businessAddress,
+                        "city": businessCity
+                    }
+                ],
             }
-        ]
+        ],
+        "info": {
+            "nodesCreated": 2
+        }
     },
     "updateBusinesses": {
         "businesses": [
             {
-                "name": "76 Station",
+                "name": businessName,
                 "categories": [
                     {
-                        "name": "Car Wash"
+                        "name": categoryInput
                     }
                 ]
             }
-        ]
+        ],
+        "info": {
+            "relationshipsCreated": 0
+        }
+    },
+    "deleteBusinesses": {
+        "nodesDeleted": 1
+    },
+    "deleteCategories": {
+        "nodesDeleted": 1
     }
 }

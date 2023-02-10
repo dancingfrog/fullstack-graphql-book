@@ -3,7 +3,8 @@ import { newServer } from "../../src/newBusinessServer";
 import {
     CREATE_BIZ_MUTATION,
     CREATE_BIZ_PARAMS,
-    CREATE_BIZ_OUTPUT } from "../data/createBusiness";
+    CREATE_BIZ_CAT_OUTPUT
+} from "../data/createBusiness";
 
 const test = require('ava');
 
@@ -30,14 +31,14 @@ test('createBusinesses', async (t: any) => {
     // Check create result
     t.deepEqual(
         // @ts-ignore
-        result.data["createBusinesses"],
-        CREATE_BIZ_OUTPUT["createBusinesses"]
+        result.data["createCategories"],
+        CREATE_BIZ_CAT_OUTPUT["createCategories"]
     );
 
     // Check update result
     t.deepEqual(
         // @ts-ignore
         result.data["updateBusinesses"],
-        CREATE_BIZ_OUTPUT["updateBusinesses"]
+        CREATE_BIZ_CAT_OUTPUT["updateBusinesses"]
     );
 });
