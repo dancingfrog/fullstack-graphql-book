@@ -31,6 +31,7 @@
     "@types/react-dom": "^18.0.6",
     "ava": "^5.1.1",
     "cross-env": "^7.0.3",
+    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1"
   },
   "scripts": {
@@ -38,6 +39,6 @@
     "test": "bash.exe neo4j-local-db.sh && npm run test:integration",
     "test:integration": "ava --config integration-tests.config.cjs",
     "test:unit": "ava",
-    "ts": "npm install cross-env ts-node && cross-env DEBUG=@neo4j/graphql:* ts-node"
+    "ts": "npm install cross-env nodemon ts-node && cross-env DEBUG=@neo4j/graphql:* nodemon"
   }
 }

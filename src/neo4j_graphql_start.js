@@ -1,11 +1,15 @@
 // noinspection SpellCheckingInspection
 
 const neo4j = require("neo4j-driver");
+const env = require('dotenv');
+env.config();
+
+console.log(process.env);
 
 function try_neo4j (auth, query) {
     const driver = neo4j.driver(
-        // "bolt://localhost:7687/neo4j",
-        "neo4j://localhost:7687",
+        // "neo4j://localhost:7687",
+        process.env.DB_URI,
         auth
     );
     const session = driver.session();
@@ -29,8 +33,10 @@ function try_neo4j (auth, query) {
 }
 
 try_neo4j(
-    // auth
-    neo4j.auth.basic("neo4j", "letmein"),
+    neo4j.auth.basic(
+        process.env.DB_USER,
+        process.env.DB_PASSWORD,
+    ),
     // query
     "MATCH (n) RETURN COUNT(n) AS num"
-)
+);

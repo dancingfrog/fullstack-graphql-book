@@ -24,10 +24,11 @@ function getContextWithDB (context: any) {
 
 const resolvers = {
     Query: {
-        allBusinesses: (obj: any, args: any, context: any, info: any) => {
-            console.log("allBusinesses resolver: ", obj);
-            return (getContextWithDB(context)).db.businesses;
-        },
+        // allBusinesses: (obj: any, args: any, context: any, info: any) => {
+        //     console.log("allBusinesses resolver obj: ", obj);
+        //     console.log("allBusinesses resolver args: ", args);
+        //     return (getContextWithDB(context)).db.businesses;
+        // },
         // businessesAggregate: {},
         // businessBySearchTerm: (obj: any, args: any, context: any, info: any) => {
         //     const compare = (a: any, b: any) => {
@@ -163,13 +164,18 @@ const typeDefs = gql`
   
   type Query {
     allBusinesses(first: Int = 10, offset: Int = 0): [Business!]!
+      @cypher(
+        statement: """
+        MATCH (b:Business) RETURN (b)
+        """
+         )
     businessBySearchTerm(
       search: String
       first: Int = 10
       offset: Int = 0
       orderBy: BusinessOrdering = name_asc
     ): [Business!]!
-    fuzzyBusinessByName(searchString: String): [Business!]!
+    fuzzyBusinessByName (searchString: String): [Business!]!
       @cypher(
         statement: """
         CALL db.index.fulltext.queryNodes( 'businessNameIndex', $searchString+'~')
