@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { gql, useQuery } from "@apollo/client"
 
 import './BusinessSearch.css';
@@ -14,26 +14,61 @@ const business_cities = businesses
     .map(b => (b.hasOwnProperty("city") ? b["city"] : null))
     .filter(c => c !== null);
 
-const business_query = `
-{
-  businesses {
-    businessId,
-    name,
-    address,
-    city
-  }
-}
-`
-
 function BusinessSearch (props) {
 
-    const { loading, error, data } = useQuery(business_query);
-    if (error) return <p>Error</p>;
-    if (loading) return <p>Loading...</p>;
+    // const data = props.data,
+    //     error = props.error,
+    //     loading = props.loading;
 
     const [ selectedBusinesses, setSelectedBusinesses ] = useState(businesses);
     const [ selectedCategory, setSelectedCategory ] = useState("All");
     const [ selectedCity, setSelectedCity] = useState("All");
+
+    const { loading, error, data } = (function () {
+        console.log("useQuery({\n  businesses {\n    businessId,\n    name,\n    address,\n    city\n  }\n})");
+//         return useQuery(gql`
+// {
+//   businesses (
+//     where: { categories_SOME: { name_CONTAINS: "Beer" } }
+//   ) {
+//     businessId,
+//     name,
+//     address,
+//     city,
+//     categories {
+//       name
+//     }
+//   }
+// }
+// `);
+        return useQuery(gql`
+query BusinessesByCategory (
+  $selectedCategory: String!
+  $selectedCity: String!
+) {
+  businesses (
+    where: { 
+      categories_SOME: { name_CONTAINS: $selectedCategory } 
+      city_CONTAINS: $selectedCity
+    }
+  ) {
+    businessId,
+    name,
+    address,
+    city,
+    categories {
+      name
+    }
+  }
+}
+`,
+            {
+                variables: {
+                    "selectedCategory": (selectedCategory === "All") ? "" : selectedCategory,
+                    "selectedCity": (selectedCity === "All") ? "" : selectedCity,
+                }
+            });
+    })();
 
     function changeBusinessCategory (evt) {
         if (business_categories.filter(c => evt.target.value === c).length > 0) {
@@ -44,8 +79,6 @@ function BusinessSearch (props) {
     }
 
     function filterBusinessesByCategory (x, category) {
-
-        const current_selected = getSelectedBusinesses();
 
         console.log("Category: ", category);
 
@@ -106,13 +139,13 @@ function BusinessSearch (props) {
         setSelectedBusinesses(selected);
     }
 
-    useEffect(() => {
-        filterBusinessesByCategory(filterBusinessesByCity(businesses, selectedCity), selectedCategory);
-    }, [ selectedCategory ]);
+    // useEffect(() => {
+    //     filterBusinessesByCategory(filterBusinessesByCity(businesses, selectedCity), selectedCategory);
+    // }, [ selectedCategory ]);
 
-    useEffect(() => {
-        filterBusinessesByCity(filterBusinessesByCategory(businesses, selectedCategory), selectedCity);
-    }, [ selectedCity ]);
+    // useEffect(() => {
+    //     filterBusinessesByCity(filterBusinessesByCategory(businesses, selectedCategory), selectedCity);
+    // }, [ selectedCity ]);
 
     return (<>
         <h2>Business Search</h2>
@@ -157,7 +190,9 @@ function BusinessSearch (props) {
 
         <BusinessSearchResults
             // x={getSelectedBusinesses()}
-            x={data.businesses}
+            data={data}
+            error={error}
+            loading={loading}
             columns={business_columns}
             labels={business_labels} />
 

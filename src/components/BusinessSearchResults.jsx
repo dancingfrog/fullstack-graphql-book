@@ -93,6 +93,10 @@ function SearchResultsTable (props) {
 
     function getValue (row, col) {
         return (row.hasOwnProperty(col)) ?
+            (col === 'categories') ?
+                row['categories'].reduce((acc, c, i) => {
+                    return acc + (i === 0 ? " ": ", ") + c.name
+                }, " ") :
             row[col] : "NA";
     }
 
@@ -140,16 +144,20 @@ export { SearchResultsTable };
 
 
 function BusinessSearchResults (props) {
-    const businesses = props.x,
+    const data = props.data,
+        error = props.error,
+        loading = props.loading,
         business_columns = props.columns,
         business_labels = props.labels;
 
-    console.log("BusinessSearchResults: ", businesses);
+    console.log("BusinessSearchResults: ", data);
 
-    return (
+    if (!!error) return <p>Error</p>;
+    else if (!!loading) return <p>Loading...</p>;
+    else return (
         <div>
             <h3>Business Search Results</h3>
-            <SearchResultsTable x={businesses} columns={business_columns} labels={business_labels} />
+            <SearchResultsTable x={data.businesses} columns={business_columns} labels={business_labels} />
         </div>
     );
 }
