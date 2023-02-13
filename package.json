@@ -20,13 +20,16 @@
     "@neo4j/graphql": "^3.15.0",
     "apollo-server": "^3.7.0",
     "ava": "^5.1.1",
+    "cross-fetch": "^3.1.5",
     "dotenv": "^16.0.3",
     "graphql": "^16.6.0",
     "neo4j-driver": "^5.5.0",
+    "node-fetch": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@neo4j/introspector": "^1.0.3",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "ava": "^5.1.1",
@@ -35,7 +38,9 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "start": "bash.exe neo4j-local-db.sh && npm run ts src/index.ts",
+    "start": "npm run start:neo4j-docker && npm run start:neo4j-graphql",
+    "start:neo4j-docker": "bash.exe neo4j-local-db.sh",
+    "start:neo4j-graphql": "npm run ts src/index.ts",
     "test": "bash.exe neo4j-local-db.sh && npm run test:integration",
     "test:integration": "ava --config integration-tests.config.cjs",
     "test:unit": "ava",

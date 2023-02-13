@@ -6,14 +6,19 @@ env.config();
 
 console.log(process.env);
 
-function try_neo4j (auth, query) {
+async function try_neo4j (query) {
     const driver = neo4j.driver(
         // "neo4j://localhost:7687",
         process.env.DB_URI,
-        auth
+        neo4j.auth.basic(
+            process.env.DB_USER,
+            process.env.DB_PASSWORD,
+        )
     );
+
     const session = driver.session();
-    session.run(query).then(result => {
+
+    await session.run(query).then(result => {
         const record = result.records[0];
         record.forEach((k, i, a) => {
             for (const i in a.keys)
@@ -26,17 +31,14 @@ function try_neo4j (auth, query) {
     })
         .catch(error => {
             console.log(error);
-        })
-        .finally(() => {
-            session.close();
-        })
+        });
+
+    return session;
 }
 
-try_neo4j(
-    neo4j.auth.basic(
-        process.env.DB_USER,
-        process.env.DB_PASSWORD,
-    ),
-    // query
-    "MATCH (n) RETURN COUNT(n) AS num"
-);
+try_neo4j("MATCH (n) RETURN COUNT(n) AS num")
+    .then((session) => {
+            session.close()
+                .finally(process.exit);
+    })
+    .finally(process.exit);
