@@ -41,7 +41,7 @@
     "start": "npm run start:neo4j-docker && npm run start:neo4j-graphql",
     "start:neo4j-docker": "bash.exe neo4j-local-db.sh",
     "start:neo4j-graphql": "npm run ts src/index.ts",
-    "test": "bash.exe neo4j-local-db.sh && npm run test:integration",
+    "test": "npm run test:integration",
     "test:integration": "ava --config integration-tests.config.cjs",
     "test:unit": "ava",
     "ts": "npm install cross-env nodemon ts-node && cross-env DEBUG=@neo4j/graphql:* nodemon"
