@@ -23,36 +23,6 @@ function getContextWithDB (context: any) {
 }
 
 const resolvers = {
-    Query: {
-        // allBusinesses: (obj: any, args: any, context: any, info: any) => {
-        //     console.log("allBusinesses resolver obj: ", obj);
-        //     console.log("allBusinesses resolver args: ", args);
-        //     return (getContextWithDB(context)).db.businesses;
-        // },
-        // businessesAggregate: {},
-        // businessBySearchTerm: (obj: any, args: any, context: any, info: any) => {
-        //     const compare = (a: any, b: any) => {
-        //         const [orderField, order] = args.orderBy.split("_");
-        //         const left = a[orderField],
-        //             right = b[orderField];
-        //
-        //         if (left < right) {
-        //             return order === "asc" ? -1 : 1;
-        //         } else if (left > right) {
-        //             return order === "desc" ? -1 : 1;
-        //         } else {
-        //             return 0;
-        //         }
-        //     };
-        //     /* TODO: What's the best way to filter/sort the following vector? */
-        //     return (getContextWithDB(context)).db.businesses
-        //         .filter((v: any) => {
-        //             return v["name"].indexOf(args.search) !== -1;
-        //         })
-        //         .slice(args.offset, args.first)
-        //         .sort(compare);
-        // }
-    },
     Business: {
         // averageStars: (obj: any, args: any, context: any, info: any) => {
         //     console.log("averageStarts resolver: ", obj);
@@ -82,26 +52,57 @@ const resolvers = {
         }
     },
     // Review: {
-    //     // user: (obj: any, args: any, context: any, info: any) => {
-    //     //     return (getContextWithDB(context)).db.users.find((user: any) => {
-    //     //         return user.userId === obj.userId;
-    //     //     });
-    //     // },
-    //     // business: (obj: any, args: any, context: any, info: any) => {
-    //     //     return (getContextWithDB(context)).db.businesses.find((b: any) => {
-    //     //         return b.businessId === obj.businessId;
-    //     //     });
-    //     // },
+    //     user: (obj: any, args: any, context: any, info: any) => {
+    //         return (getContextWithDB(context)).db.users.find((user: any) => {
+    //             return user.userId === obj.userId;
+    //         });
+    //     },
+    //     business: (obj: any, args: any, context: any, info: any) => {
+    //         return (getContextWithDB(context)).db.businesses.find((b: any) => {
+    //             return b.businessId === obj.businessId;
+    //         });
+    //     },
     // },
     // User: {
-    //     // reviews: (obj: any, args: any, context: any, info: any) => {
-    //     //     return obj.reviewIds.map((v: any) => {
-    //     //         return (getContextWithDB(context)).db.reviews.find((review: any) => {
-    //     //             return review.reviewId === v;
-    //     //         });
-    //     //     });
-    //     // }
-    // }
+    //     reviews: (obj: any, args: any, context: any, info: any) => {
+    //         return obj.reviewIds.map((v: any) => {
+    //             return (getContextWithDB(context)).db.reviews.find((review: any) => {
+    //                 return review.reviewId === v;
+    //             });
+    //         });
+    //     }
+    // },
+
+    Query: {
+        // allBusinesses: (obj: any, args: any, context: any, info: any) => {
+        //     console.log("allBusinesses resolver obj: ", obj);
+        //     console.log("allBusinesses resolver args: ", args);
+        //     return (getContextWithDB(context)).db.businesses;
+        // },
+        // businessesAggregate: {},
+        businessBySearchTerm: (obj: any, args: any, context: any, info: any) => {
+            const compare = (a: any, b: any) => {
+                const [orderField, order] = args.orderBy.split("_");
+                const left = a[orderField],
+                    right = b[orderField];
+
+                if (left < right) {
+                    return order === "asc" ? -1 : 1;
+                } else if (left > right) {
+                    return order === "desc" ? -1 : 1;
+                } else {
+                    return 0;
+                }
+            };
+            /* TODO: What's the best way to filter/sort the following vector? */
+            return (getContextWithDB(context)).db.businesses
+                .filter((v: any) => {
+                    return v["name"].indexOf(args.search) !== -1;
+                })
+                .slice(args.offset, args.first)
+                .sort(compare);
+        }
+    }
 };
 
 const typeDefs = gql`
