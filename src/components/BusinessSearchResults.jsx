@@ -75,8 +75,8 @@ import Paper from '@material-ui/core/Paper';
 //     }
 // }
 
-/* TODO: Understand why this functional component version of SearchResultsTable
- * re-renders on changes to props values, but the class component ^ above does not
+/** TODO: Understand why the class component ^ above does not  re-renders on changes to
+ *   props values, but the following functional component version of SearchResultsTable does
  */
 function SearchResultsTable (props) {
     // const { businesses, business_columns, business_labels } = props;

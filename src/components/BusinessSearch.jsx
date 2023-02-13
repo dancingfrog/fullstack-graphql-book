@@ -1,8 +1,10 @@
+import React, { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client"
+
 import './BusinessSearch.css';
 import BusinessSearchResults from "./BusinessSearchResults";
-import { SearchResultsTable } from "./BusinessSearchResults";
+// import { SearchResultsTable } from "./BusinessSearchResults";
 import businesses, { business_columns, business_labels } from "./businesses";
-import React, { useEffect, useState } from "react";
 
 const business_categories = businesses
     .map(b => (b.hasOwnProperty("category") ? b["category"] : null))
@@ -12,7 +14,22 @@ const business_cities = businesses
     .map(b => (b.hasOwnProperty("city") ? b["city"] : null))
     .filter(c => c !== null);
 
+const business_query = `
+{
+  businesses {
+    businessId,
+    name,
+    address,
+    city
+  }
+}
+`
+
 function BusinessSearch (props) {
+
+    const { loading, error, data } = useQuery(business_query);
+    if (error) return <p>Error</p>;
+    if (loading) return <p>Loading...</p>;
 
     const [ selectedBusinesses, setSelectedBusinesses ] = useState(businesses);
     const [ selectedCategory, setSelectedCategory ] = useState("All");
@@ -63,8 +80,6 @@ function BusinessSearch (props) {
 
     function filterBusinessesByCity (x, city) {
 
-        const current_selected = getSelectedBusinesses();
-
         console.log("City: ", city);
 
         const selected =  (city === "All") ?
@@ -108,48 +123,6 @@ function BusinessSearch (props) {
                     onChange={changeBusinessCategory}
                 >
                     <option value={"All"}>All</option>
-                    {/*<input*/}
-                    {/*    type="checkbox"*/}
-                    {/*    name="Library"*/}
-                    {/*    value="Library"*/}
-                    {/*    checked={ selectedCategory[0]}*/}
-                    {/*    onChange={() => handleOnChange(0)}*/}
-                    {/*/>*/}
-                    {/*<input*/}
-                    {/*    type="checkbox"*/}
-                    {/*    name="Library"*/}
-                    {/*    value="Library"*/}
-                    {/*/>*/}
-                    {/*<label>Library</label>*/}
-                    {/*<option value={"Library"}>Library</option>*/}
-                    {/*<input*/}
-                    {/*    type="checkbox"*/}
-                    {/*    name="Restaurant"*/}
-                    {/*    value="Restaurant"*/}
-                    {/*    checked={ selectedCategory[1]}*/}
-                    {/*    onChange={() => handleOnChange(1)}*/}
-                    {/*/>*/}
-                    {/*<input*/}
-                    {/*    type="checkbox"*/}
-                    {/*    name="Restaurant"*/}
-                    {/*    value="Restaurant"*/}
-                    {/*/>*/}
-                    {/*<label>Restaurant</label>*/}
-                    {/*<option value={"Restaurant"}>Restaurant</option>*/}
-                    {/*<input*/}
-                    {/*    type="checkbox"*/}
-                    {/*    name="Car Wash"*/}
-                    {/*    value="Car Wash"*/}
-                    {/*    checked={ selectedCategory[2]}*/}
-                    {/*    onChange={() => handleOnChange(2)}*/}
-                    {/*/>*/}
-                    {/*<input*/}
-                    {/*    type="checkbox"*/}
-                    {/*    name="Car Wash"*/}
-                    {/*    value="Car Wash"*/}
-                    {/*/>*/}
-                    {/*<label>Car Wash</label>*/}
-                    {/*<option value={"Car Wash"}>Car Wash</option>*/}
                     {business_categories.map((cat, i, a) =>
                         <option key={"cat-" + i.toString() + "-" + cat.toString()} value={cat}>{cat}</option>
                     )}
@@ -183,7 +156,8 @@ function BusinessSearch (props) {
         </form>
 
         <BusinessSearchResults
-            x={getSelectedBusinesses()}
+            // x={getSelectedBusinesses()}
+            x={data.businesses}
             columns={business_columns}
             labels={business_labels} />
 

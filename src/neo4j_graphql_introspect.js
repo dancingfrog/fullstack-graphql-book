@@ -28,18 +28,9 @@ function sessionFactory () {
 }
 
 async function try_neo4j () {
-    const driver = neo4j.driver(
-        // "neo4j://localhost:7687",
-        process.env.DB_URI,
-        neo4j.auth.basic(
-            process.env.DB_USER,
-            process.env.DB_PASSWORD,
-        )
-    );
-
     const query = "MATCH (n) RETURN COUNT(n) AS num";
 
-    const session = sessionFactory ();
+    const session = sessionFactory();
 
     if (!session_running[session.id]) session_running[session.id] = true;
     else setTimeout(() => session.close().finally(process.exit), 333);
