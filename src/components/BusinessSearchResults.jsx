@@ -7,6 +7,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import { setMarkedBusinesses } from "./markedBusinesses";
+
 // class SearchResultsTable extends React.Component {
 //
 //     constructor (props) {
@@ -35,7 +37,7 @@ import Paper from '@material-ui/core/Paper';
 //
 //     createCell (row, col, i) {
 //         // console.log(i.toString() + "-" + col.toString(), ":", this.getValue(row, col));
-//         return (col.toString == "name") ?
+//         return (col.toString() == "name") ?
 //             <TableCell key={i.toString() + "-" + col.toString()} component="th" scope="row">{this.getValue(row, col)}</TableCell> :
 //             <TableCell key={i.toString() + "-" + col.toString()} align="right">{this.getValue(row, col)}</TableCell>
 //     }
@@ -53,7 +55,7 @@ import Paper from '@material-ui/core/Paper';
 //                     <TableHead>
 //                         <TableRow>
 //                             {this.columns.map((col) =>
-//                                 (col.toString == "name") ?
+//                                 (col.toString() == "name") ?
 //                                     <TableCell key={col.toString()}>{this.getLabel(col)}</TableCell> :
 //                                     <TableCell align="right" key={col.toString()}>{this.getLabel(col)}</TableCell>
 //                             )}
@@ -86,6 +88,8 @@ function SearchResultsTable (props) {
 
     console.log("SearchResultsTable: ", data);
 
+    const markedBusinesses = setMarkedBusinesses();
+
     function getLabel (col) {
         return (labels.hasOwnProperty(col)) ?
             labels[col] : col;
@@ -102,9 +106,30 @@ function SearchResultsTable (props) {
 
     function createCell (row, col, i) {
         // console.log(i.toString() + "-" + col.toString(), ":", getValue(row, col));
-        return (col.toString == "name") ?
-            <TableCell key={i.toString() + "-" + col.toString()} component="th" scope="row">{getValue(row, col)}</TableCell> :
-            <TableCell key={i.toString() + "-" + col.toString()} align="right">{getValue(row, col)}</TableCell>
+        return (col.toString() === "name") ? (
+                <TableCell key={i.toString() + "-" + col.toString()} component="th" scope="row"
+                           style={getValue(row, "businessMarked") ? { fontWeight: "bold" } : null} >{
+                    getValue(row, col)
+                }</TableCell>
+            ):
+            (col.toString() === "marked") ? (
+                <TableCell key={i.toString() + "-" + col.toString()} component="th" scope="row">
+                    <button onClick={() => {
+                        /* TODO: What's the best way to filter/sort the markedBusinesses list/vector? */
+                        return getValue(row, "businessMarked") ?
+                            /* TODO: What's the best way to find/delete a node from the markedBusinesses list/vector? */
+                            setMarkedBusinesses([ ...markedBusinesses ]) : // <- TODO: delete by businessId
+                            setMarkedBusinesses([ ...markedBusinesses, getValue(row, "businessId") ])
+                    }}>
+                    Mark
+                    </button>
+                </TableCell>
+
+            ): (
+                <TableCell key={i.toString() + "-" + col.toString()} align="right">{
+                    getValue(row, col)
+                }</TableCell>
+            );
     }
 
     function createRowKey (row, col, i) {
@@ -119,7 +144,7 @@ function SearchResultsTable (props) {
                 <TableHead>
                     <TableRow>
                         {columns.map((col) =>
-                            (col.toString == "name") ?
+                            (col.toString() === "name" || col.toString() === "marked") ?
                                 <TableCell key={col.toString()}>{getLabel(col)}</TableCell> :
                                 <TableCell align="right" key={col.toString()}>{getLabel(col)}</TableCell>
                         )}

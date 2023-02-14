@@ -24,8 +24,57 @@ function BusinessSearch (props) {
     const [ selectedCategory, setSelectedCategory ] = useState("All");
     const [ selectedCity, setSelectedCity] = useState("All");
 
+    const BUSINESS_DETAILS_FRAGMENT = gql`
+fragment businessDetails on Business {
+  businessId,
+  name,
+  address,
+  city,
+  categories {
+    name
+  }
+}
+`;
+
+    const BUSINESSES_QUERY = gql`
+query BusinessesByCategory (
+  $selectedCategory: String!
+  $selectedCity: String!
+) {
+  businesses (
+    where: { 
+      categories_SOME: { name_CONTAINS: $selectedCategory } 
+      city_CONTAINS: $selectedCity
+    }
+  ) {
+    ...businessDetails
+    
+    averageStars
+    
+    businessMarked @client
+    
+    reviews {
+      stars
+      text
+      user {
+        name
+      }
+    }
+  }
+}
+
+${BUSINESS_DETAILS_FRAGMENT}
+
+`;
+
+    const variables = {
+        "selectedCategory": (selectedCategory === "All") ? "" : selectedCategory,
+        "selectedCity": (selectedCity === "All") ? "" : selectedCity,
+    };
+
     const { loading, error, data } = (function () {
-        console.log("useQuery({\n  businesses {\n    businessId,\n    name,\n    address,\n    city\n  }\n})");
+        console.log(`useQuery({\n ${BUSINESSES_QUERY}\n})`);
+
 //         return useQuery(gql`
 // {
 //   businesses (
@@ -41,32 +90,10 @@ function BusinessSearch (props) {
 //   }
 // }
 // `);
-        return useQuery(gql`
-query BusinessesByCategory (
-  $selectedCategory: String!
-  $selectedCity: String!
-) {
-  businesses (
-    where: { 
-      categories_SOME: { name_CONTAINS: $selectedCategory } 
-      city_CONTAINS: $selectedCity
-    }
-  ) {
-    businessId,
-    name,
-    address,
-    city,
-    categories {
-      name
-    }
-  }
-}
-`,
+        return useQuery(
+            BUSINESSES_QUERY,
             {
-                variables: {
-                    "selectedCategory": (selectedCategory === "All") ? "" : selectedCategory,
-                    "selectedCity": (selectedCity === "All") ? "" : selectedCity,
-                }
+                variables
             });
     })();
 

@@ -47,6 +47,7 @@ const businesses = [
 export default businesses;
 
 export const business_columns = [
+    "marked",
     "name",
     "businessId",
     "address",
@@ -55,6 +56,7 @@ export const business_columns = [
 ];
 
 export const business_labels = {
+    "marked": "Marked",
     "name": "Business Name",
     "businessId": "ID",
     "address": "Street Address",
