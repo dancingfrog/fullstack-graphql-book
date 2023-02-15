@@ -13,6 +13,7 @@ import { setMarkedBusinesses } from "./markedBusinesses";
 //
 //     constructor (props) {
 //         super(props);
+//         this.props = props;
 //         this.data = props.x;
 //         this.columns = props.columns;
 //         this.labels = props.labels;
@@ -25,6 +26,27 @@ import { setMarkedBusinesses } from "./markedBusinesses";
 //         this.createRowKey = this.createRowKey.bind(this);
 //     }
 //
+//     /** componentDidUpdate() hook explained in https://www.youtube.com/watch?v=0o_6gztfG8c
+//      *
+//      * @param prevProps
+//      * @param prevState
+//      * @param snapshot
+//      */
+//     componentDidUpdate (prevProps, prevState, snapshot) {
+//         console.log("SearchResultsTable prevProps:", prevProps);
+//
+//         if (prevProps !== this.props) {
+//             console.log("Props have changed:", this.props);
+//             this.data = this.props.x;
+//             this.columns = this.props.columns;
+//             this.labels = this.props.labels;
+//             this.forceUpdate(); // <- !
+//         } else {
+//             console.log("Props are the same:", this.props)
+//         }
+//
+//     }
+//
 //     getLabel (col) {
 //         return (this.labels.hasOwnProperty(col)) ?
 //             this.labels[col] : col;
@@ -32,12 +54,16 @@ import { setMarkedBusinesses } from "./markedBusinesses";
 //
 //     getValue (row, col) {
 //         return (row.hasOwnProperty(col)) ?
-//             row[col] : "NA";
+//             (col === 'categories') ?
+//                 row['categories'].reduce((acc, c, i) => {
+//                     return acc + (i === 0 ? " ": ", ") + c.name
+//                 }, " ") :
+//                 row[col] : "NA";
 //     }
 //
 //     createCell (row, col, i) {
 //         // console.log(i.toString() + "-" + col.toString(), ":", this.getValue(row, col));
-//         return (col.toString() == "name") ?
+//         return (col.toString() === "name") ?
 //             <TableCell key={i.toString() + "-" + col.toString()} component="th" scope="row">{this.getValue(row, col)}</TableCell> :
 //             <TableCell key={i.toString() + "-" + col.toString()} align="right">{this.getValue(row, col)}</TableCell>
 //     }
@@ -55,7 +81,7 @@ import { setMarkedBusinesses } from "./markedBusinesses";
 //                     <TableHead>
 //                         <TableRow>
 //                             {this.columns.map((col) =>
-//                                 (col.toString() == "name") ?
+//                                 (col.toString() === "name") ?
 //                                     <TableCell key={col.toString()}>{this.getLabel(col)}</TableCell> :
 //                                     <TableCell align="right" key={col.toString()}>{this.getLabel(col)}</TableCell>
 //                             )}
@@ -77,17 +103,28 @@ import { setMarkedBusinesses } from "./markedBusinesses";
 //     }
 // }
 
-/** TODO: Understand why the class component ^ above does not  re-renders on changes to
- *   props values, but the following functional component version of SearchResultsTable does
+/** SearchResultsTable
+ *  Modern React development prefers functional components; easier to work with; fewer bugs
+ *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
  */
 function SearchResultsTable (props) {
-    // const { businesses, business_columns, business_labels } = props;
+
     const data = props.x,
         columns = props.columns,
         labels = props.labels;
 
     console.log("SearchResultsTable: ", data);
 
+    /* TODO: Assuming markedBusinesses is a (linked) list, create functions:
+     *  * isEmpty(list): is the list empty?
+     *  * getSize(list): return the length of the list
+     *  * addItem(list, item): add item and return the length of the list
+     *  * findItem(list, item): return the position/index of the given item
+     *  * deleteItem(list, item): remove the given item from the list and return the position
+     */
     const markedBusinesses = setMarkedBusinesses();
 
     function getLabel (col) {
@@ -168,6 +205,12 @@ function SearchResultsTable (props) {
 export { SearchResultsTable };
 
 
+/** BusinessSearchResults
+ *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function BusinessSearchResults (props) {
     const data = props.data,
         error = props.error,

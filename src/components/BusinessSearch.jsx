@@ -14,6 +14,12 @@ const business_cities = businesses
     .map(b => (b.hasOwnProperty("city") ? b["city"] : null))
     .filter(c => c !== null);
 
+/** BusinessSearch
+ *
+ * @param props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function BusinessSearch (props) {
 
     // const data = props.data,
