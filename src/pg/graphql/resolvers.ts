@@ -19,6 +19,15 @@ export default function Resolvers (this: {
   console.log(db.models);
 
   return {
+    RootQuery: {
+      posts (root: any, args: any, context: any) {
+        return Post.findAll({
+          order: [
+            [ 'createdAt', 'DESC' ]
+          ]
+        });
+      }
+    }
     // Post: {
     //   user (post, args, context) {
     //     return post.getUser();
@@ -44,54 +53,54 @@ export default function Resolvers (this: {
     //     return chat.getUsers();
     //   },
     // },
-    RootQuery: {
-      posts (root: any, args: any, context: any) {
-        return Post.findAll({
-          order: [
-            [ 'createdAt', 'DESC' ]
-          ]
-        });
-      },
-      // chats (root, args, context) {
-      //   return User.findAll().then((users) => {
-      //     if (!users.length) {
-      //       return [];
-      //     }
-      //
-      //     const usersRow = users[0];
-      //
-      //     return Chat.findAll({
-      //       include: [ {
-      //         model: User,
-      //         required: true,
-      //         through: {
-      //           where: {
-      //             userId: usersRow.id
-      //           }
-      //         },
-      //       },
-      //         {
-      //           model: Message,
-      //         }
-      //       ],
-      //     });
-      //   });
-      // },
-      // chat (root, {
-      //   chatId
-      // }, context) {
-      //   return Chat.findByPk(chatId, {
-      //     include: [ {
-      //       model: User,
-      //       required: true,
-      //     },
-      //       {
-      //         model: Message,
-      //       }
-      //     ],
-      //   });
-      // },
-    },
+    // RootQuery: {
+    //   posts (root: any, args: any, context: any) {
+    //     return Post.findAll({
+    //       order: [
+    //         [ 'createdAt', 'DESC' ]
+    //       ]
+    //     });
+    //   },
+    //   chats (root, args, context) {
+    //     return User.findAll().then((users) => {
+    //       if (!users.length) {
+    //         return [];
+    //       }
+    //
+    //       const usersRow = users[0];
+    //
+    //       return Chat.findAll({
+    //         include: [ {
+    //           model: User,
+    //           required: true,
+    //           through: {
+    //             where: {
+    //               userId: usersRow.id
+    //             }
+    //           },
+    //         },
+    //           {
+    //             model: Message,
+    //           }
+    //         ],
+    //       });
+    //     });
+    //   },
+    //   chat (root, {
+    //     chatId
+    //   }, context) {
+    //     return Chat.findByPk(chatId, {
+    //       include: [ {
+    //         model: User,
+    //         required: true,
+    //       },
+    //         {
+    //           model: Message,
+    //         }
+    //       ],
+    //     });
+    //   },
+    // },
     // RootMutation: {
     //   addChat (root, {
     //     chat
