@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.8",
+    "@graphql-tools/schema": "^9.0.16",
     "@neo4j/graphql": "^3.15.0",
     "apollo-server": "^3.7.0",
     "ava": "^5.1.1",
@@ -26,8 +27,12 @@
     "graphql": "^16.6.0",
     "neo4j-driver": "^5.5.0",
     "node-fetch": "^3.3.0",
+    "pg": "^8.9.0",
+    "pg-hstore": "^2.3.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sequelize": "^6.28.1",
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
     "@neo4j/introspector": "^1.0.3",
@@ -39,12 +44,20 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "start": "npm run start:neo4j-docker && npm run start:neo4j-graphql",
-    "start:neo4j-docker": "bash.exe neo4j-local-db.sh",
-    "start:neo4j-graphql": "npm run ts src/index.ts",
+    "dev:model:generate:Post": "sequelize model:generate '--name' Post '--attributes' text:text '--migrations-path' src/pg/migrations '--models-path' src/pg/models",
+    "dev:db:migrate": "npm run tsc src/pg/config/index && sequelize db:migrate '--config' src/pg/config/index.js '--migrations-path' src/pg/migrations",
+    "dev:db:seed": "npm run tsc src/pg/config/index && sequelize db:seed:all '--config' src/pg/config/index.js '--seeders-path' src/pg/seeders",
+    "dev:seed:generate": "sequelize seed:generate '--name' fake-posts '--seeders-path' src/pg/seeders",
+    "postinstall": "npm install -g sequelize-cli",
+    "start": "npm run start:pg-docker && npm run start:pg-graphql",
+    "start:neo4j-docker": "bash neo4j-local-db.sh",
+    "start:neo4j-graphql": "npm run ts src/neo4j/index.ts",
+    "start:pg-docker": "bash pg-local-db.sh",
+    "start:pg-graphql": "npm run ts src/pg/index.ts",
     "test": "npm run test:integration",
     "test:integration": "ava --config integration-tests.config.cjs",
     "test:unit": "ava",
-    "ts": "npm install cross-env nodemon ts-node && cross-env DEBUG=@neo4j/graphql:* nodemon"
+    "ts": "npm install cross-env nodemon ts-node && cross-env DEBUG=apollo-server:* nodemon '--watch' src ",
+    "tsc": "npm install cross-env typescript && tsc '--skipLibCheck' "
   }
 }

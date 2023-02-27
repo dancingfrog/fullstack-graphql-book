@@ -3,16 +3,26 @@
     "declaration": true,
     "importHelpers": true,
     "module": "commonjs",
-    "outDir": "lib",
+    "outDir": "src",
     "rootDirs": ["./src", "./test"],
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "types": []
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "./node_modules",
+    "./node_modules/**/*",
+    "../node_modules",
+    "../node_modules/**/*",
+    "../../node_modules",
+    "../../node_modules/**/*",
+    "../../../node_modules",
+    "../../../node_modules/**/*"
   ],
   "include": [
-    "src/**/*"
+    "./src/**/*.ts"
   ]
 }

@@ -3,6 +3,7 @@
 *.idea
 *-lock.json
 neo4j-local-db
+pg-local-db
 
 .R*
 *.Rproj*

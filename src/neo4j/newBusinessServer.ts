@@ -1,6 +1,6 @@
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { ApolloServer } from "apollo-server";
-import { db } from "./data/mockBusinessDB";
+import { db } from "../data/mockBusinessDB";
 import { Context } from "@apollo/client";
 
 const neo4j = require('neo4j-driver');

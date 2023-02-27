@@ -1,5 +1,5 @@
 import { ApolloServer } from "apollo-server";
-import { newServer } from "../../src/newBusinessServer";
+import { newServer } from "../../src/neo4j/newBusinessServer";
 import {
     CREATE_BIZ_MUTATION,
     CREATE_BIZ_PARAMS,
