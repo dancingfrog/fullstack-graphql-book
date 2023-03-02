@@ -37,11 +37,13 @@ export default (sequelize: Sequelize, sub_directory: string = ".") => {
 
     Object.keys(context).forEach((module: any) => {
         const model = context[module](sequelize, Sequelize);
+        console.log(module + ":", model);
         db[model.name] = model;
     });
 
     Object.keys(db).forEach((modelName: string) => {
         if (typeof db[modelName].associate === 'function') {
+            console.log(modelName + `: db[${modelName}].associate(db)`);
             db[modelName].associate(db);
         }
     });

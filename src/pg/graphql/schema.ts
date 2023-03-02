@@ -1,20 +1,44 @@
 import { gql } from "apollo-server";
 
-export default [
+export default // [
   gql`
+    type User {
+      id: Int
+      avatar: String
+      username: String
+    }
+
     type Post {
       id: Int
       text: String
+      user: User
     }
   
     type RootQuery {
       posts: [Post]
     }
+    
+    input PostInput {
+      text: String!
+    }
+    
+    input UserInput {
+      username: String!
+      avatar: String!
+    }
+    
+    type RootMutation {
+      addPost (
+        post: PostInput!
+        user: UserInput!
+      ): Post
+    }
   
     schema {
       query: RootQuery
+      mutation: RootMutation
     }
-  `,
+  `; //,
   // gql`
   //   type User {
   //     id: Int
@@ -77,4 +101,4 @@ export default [
   //     mutation: RootMutation
   //   }
   // `
-];
+//];

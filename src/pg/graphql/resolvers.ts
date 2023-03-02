@@ -1,4 +1,6 @@
 import { Sequelize } from "sequelize";
+import mockPostsDB from "../../data/mockPostsDB";
+import PostObject from "../models/Post";
 
 export default function Resolvers (this: {
   db: {
@@ -15,24 +17,47 @@ export default function Resolvers (this: {
     // Message
   } = db.models;
 
-  console.log("db.models:");
-  console.log(db.models);
+  // console.log("db.models:");
+  // console.log(db.models);
+
+  const posts: Array<PostObject> = mockPostsDB.posts;
 
   return {
+    Post: {
+      user (post: PostObject, args: any, context:any) {
+        // return { "username": "(Mock) John" };
+        console.log("Returned post:", post);
+        return (post.constructor.prototype.name === "PostObject")?
+            post.getUser() :
+            (post.hasOwnProperty("user")) ?
+            post["user"] :
+                { "username": "Anon" };
+      },
+    },
     RootQuery: {
       posts (root: any, args: any, context: any) {
-        return Post.findAll({
-          order: [
-            [ 'createdAt', 'DESC' ]
-          ]
-        });
+        console.log("Resolve posts...")
+        return posts;
+        // return PostObject.findAll({
+        //   order: [
+        //     [ 'createdAt', 'DESC' ]
+        //   ]
+        // });
+      }
+    },
+    RootMutation: {
+      addPost(root: any, input: { post: any, user: any }, context: any) {
+        const { post, user } = input;
+        const postObject = { // new PostObject(
+          id: posts.length,
+          text: post.text, // ...post
+          user: user
+        }; //);
+        console.log("New post: ", postObject);
+        posts.push(<PostObject>postObject);
+        return postObject;
       }
     }
-    // Post: {
-    //   user (post, args, context) {
-    //     return post.getUser();
-    //   },
-    // },
     // Message: {
     //   user (message, args, context) {
     //     return message.getUser();
@@ -55,7 +80,7 @@ export default function Resolvers (this: {
     // },
     // RootQuery: {
     //   posts (root: any, args: any, context: any) {
-    //     return Post.findAll({
+    //     return PostObject.findAll({
     //       order: [
     //         [ 'createdAt', 'DESC' ]
     //       ]
@@ -145,7 +170,7 @@ export default function Resolvers (this: {
     //     return User.findAll().then((users) => {
     //       const usersRow = users[0];
     //
-    //       return Post.create({
+    //       return PostObject.create({
     //         ...post,
     //       }).then((newPost) => {
     //         return Promise.all([
@@ -153,7 +178,7 @@ export default function Resolvers (this: {
     //         ]).then(() => {
     //           console.log({
     //             level: 'info',
-    //             message: 'Post was created',
+    //             message: 'PostObject was created',
     //           });
     //           return newPost;
     //         });

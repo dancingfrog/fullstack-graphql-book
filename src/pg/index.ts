@@ -21,8 +21,9 @@ const utils = {
 (async function () {
 
     (await server(utils))
-        .listen().then(({ url }) => {
-        console.log(`🚀 Apollo GraphQL server is ready at ${url}`);
-    });
+        .listen()
+        .then(({ url }) => {
+            console.log(`🚀 Apollo GraphQL server is ready at ${url}`);
+        });
 
 })();
