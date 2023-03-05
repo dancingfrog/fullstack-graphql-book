@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import React, { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import debounce from 'lodash/debounce';
+import { Table } from "@mui/material";
+import { TableBody } from "@mui/material";
+import { TableCell } from "@mui/material";
+import { TableContainer } from "@mui/material";
+import { TableHead } from "@mui/material";
+import { TableRow } from "@mui/material";
+import { Paper } from "@mui/material";
 
 import mockPostsDb from '../data/mockPostsDB';
 
@@ -106,13 +108,52 @@ class PostTable extends React.Component {
  */
 function PostsFeed (props) {
 
-    const [ posts, setPosts ] = useState(mockPostsDb.posts);
+    const POSTS_QUERY = gql`{
+        posts {
+            id
+            text
+            user {
+                id
+                username
+                avatar
+            }
+        }
+    }`
+
+    const { loading, error, data } = useQuery(POSTS_QUERY);
+    const [ posts, setPosts ] = useState(data || mockPostsDb.posts);
+    const setPostsDebounced = debounce(setPosts);
+
+    useEffect(() => {
+        console.log("data:", data);
+        if (!!data && data.hasOwnProperty("posts")) {
+            setPostsDebounced(data.posts);
+        }
+    }, [ data ]);
+
+    function getPostsRowsData() {
+        console.log("posts data: ", data);
+        console.log("loading: ", loading);
+        return true;
+    }
+
+    function getPostsRowsError() {
+        console.log("posts data: ", data);
+        console.log("error: ", error);
+        return true;
+    }
 
     return (<>
         <div className="content">
-            {(posts !== null && posts.length > 0) ?
+            {(error && getPostsRowsError()) ? (
+                    <div>
+                        GraphQL Error: ${error.message}
+                    </div>
+                ) :
+                (!loading && getPostsRowsData()) ?
                 <div className="feed">
                     { posts.map((post, i) => {
+                    {/*{ data.map((post, i) => {*/}
 
                         const
                             table_columns = [ "user-post", "user-avatar" ],

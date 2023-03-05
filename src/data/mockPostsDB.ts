@@ -3,53 +3,70 @@ const posts: Array<any> = [
         "id": 1,
         "text": "(Mock) Lorem ipsum",
         "user": {
-            "username": "(Mock) John"
+            "id": 3,
+            "username": "(Mock) John",
+            "avatar": "/images/party.gif"
         }
     },
     {
         "id": 2,
         "text": "(Mock) Lorem ipsum",
         "user": {
-            "username": "(Mock) Dave"
+            "id": 4,
+            "username": "(Mock) Dave",
+            "avatar": "/images/party.gif"
         }
     },
-];
-
-const reviews = [
     {
-        reviewId: "r1",
-        stars: 3,
-        text: "(Mock) Friendly staff. Interlibrary loan is super fast",
-        businessId: "b1",
-        userId: "u1",
+        "id": 3,
+        "text": "(Mock) Friendly staff. Interlibrary loan is super fast",
+        "user": {
+            "id": 1,
+            "username": "(Mock) Will",
+            "avatar": "/images/party.gif"
+        },
     },
     {
-        reviewId: "r2",
-        stars: 4,
-        text: "(Mock) Easy downtown access, lots of free parking",
-        businessId: "b1",
-        userId: "u2",
+        "id": 4,
+        "text": "(Mock) Easy downtown access, lots of free parking",
+        "user": {
+            "id": 2,
+            "username": "(Mock) Bob",
+            "avatar": "/images/party.gif"
+        },
     },
     {
-        reviewId: "r3",
-        stars: 5,
-        text: "(Mock) Lots of glass and sunlight for reading. Comfy chairs in large print section.",
-        businessId: "b1",
-        userId: "u1",
-    },
+        "id": 5,
+        "text": "(Mock) Lots of glass and sunlight for reading. Comfy chairs in large print section.",
+        "user": {
+            "id": 1,
+            "username": "(Mock) Will",
+            "avatar": "/images/party.gif"
+        }
+    }
 ];
 
 const users = [
     {
-        userId: "u1",
-        name: "(Mock) Will",
-        reviewIds: ["r1", "r2"],
+        "id": 1,
+        "username": "(Mock) Will",
+        "avatar": "/images/party.gif"
     },
     {
-        userId: "u2",
-        name: "(Mock) Bob",
-        reviewIds: ["r3"],
+        "id": 1,
+        "username": "(Mock) Will",
+        "avatar": "/images/party.gif"
     },
+    {
+        "id": 3,
+        "username": "(Mock) John",
+        "avatar": "/images/party.gif"
+    },
+    {
+        "id": 4,
+        "username": "(Mock) Dave",
+        "avatar": "/images/party.gif"
+    }
 ];
 
-export default { posts, reviews, users };
+export default { posts, users };

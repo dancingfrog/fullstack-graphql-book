@@ -1,0 +1,36 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: RootQuery
+    mutation: RootMutation
+}
+
+type RootMutation {
+    addPost(post: postInput!, user: userInput): post
+}
+
+type RootQuery {
+    posts: [post]
+    users: [user]
+}
+
+type post {
+    id: Int
+    text: String
+    user: user
+}
+
+type user {
+    avatar: String
+    id: Int
+    username: String
+}
+
+input postInput {
+    text: String!
+}
+
+input userInput {
+    avatar: String!
+    username: String!
+}
