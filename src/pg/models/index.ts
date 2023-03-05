@@ -2,9 +2,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { Sequelize } from "sequelize";
 
-const env: string = process.env.NODE_ENV || "development";
-const config = require('../config')[env];
-
 export default (sequelize: Sequelize, sub_directory: string = ".") => {
 
     const
@@ -21,9 +18,9 @@ export default (sequelize: Sequelize, sub_directory: string = ".") => {
         const name = file.match(/^((?!index\.js).*)\.js$/);
         if (name !== null && name.length > 1) {
             const models = {};
-            console.log(name[1]);
+            // console.log(name[1]);
             (<any>models)[name[1]] = require(paths + name[0]);
-            console.log(models);
+            // console.log(models);
             for (let p in models) {
                 if (models.hasOwnProperty(p)) {
                     context[p] = (<any>models)[p];
@@ -33,7 +30,7 @@ export default (sequelize: Sequelize, sub_directory: string = ".") => {
     });
     // });
 
-    console.log(context);
+    // console.log(context);
 
     Object.keys(context).forEach((module: any) => {
         const model = context[module](sequelize, Sequelize);

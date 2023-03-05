@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
-import mockPostsDB from "../../data/mockPostsDB";
-import PostObject from "../models/Post";
+import Post from "../models/Post";
+import User from "../models/User";
+// import mockPostsDB from "../../data/mockPostsDB";
 
 export default function Resolvers (this: {
   db: {
@@ -11,54 +12,87 @@ export default function Resolvers (this: {
 ) {
   const { db } = this;
   const {
-    Post,
-    // User,
-    // Chat,
-    // Message
+    post,
+    user,
+    // chat,
+    // message
   } = db.models;
 
   // console.log("db.models:");
   // console.log(db.models);
 
-  const posts: Array<PostObject> = mockPostsDB.posts;
+  // const posts: Array<Post> = mockPostsDB.posts;
 
   return {
-    Post: {
-      user (post: PostObject, args: any, context:any) {
+    post: {
+      user (post: Post, args: any, context:any): User {
         // return { "username": "(Mock) John" };
         console.log("Returned post:", post);
-        return (post.constructor.prototype.name === "PostObject")?
+        return <User>(
+            (post.constructor.prototype.name === "Post" || typeof post.getUser === 'function')?
             post.getUser() :
             (post.hasOwnProperty("user")) ?
             post["user"] :
-                { "username": "Anon" };
+                {
+                  "id": 0,
+                  "username": "Anon",
+                  "avatar": "/images/party.gif"
+                }
+        );
       },
     },
     RootQuery: {
       posts (root: any, args: any, context: any) {
         console.log("Resolve posts...")
-        return posts;
-        // return PostObject.findAll({
-        //   order: [
-        //     [ 'createdAt', 'DESC' ]
-        //   ]
-        // });
+        // return posts;
+        return post.findAll({
+          order: [
+            [ 'createdAt', 'ASC' ]
+          ]
+        });
+      },
+      users (root: any, args: any, context: any) {
+        console.log("Resolve users...")
+        return user.findAll({
+          order: [
+            [ 'createdAt', 'ASC' ]
+          ]
+        });
       }
     },
     RootMutation: {
-      addPost(root: any, input: { post: any, user: any }, context: any) {
-        const { post, user } = input;
-        const postObject = { // new PostObject(
-          id: posts.length,
-          text: post.text, // ...post
-          user: user
+      async addPost(root: any, input: { post: any, user?: any }, context: any) {
+        const postInput = input["post"];
+        const userInput = (!!input["user"] && input["user"].hasOwnProperty("username")) ?
+            input["user"] :
+            (await user.findAll()
+                .then((users: any) => {
+                  const usersRow = users[0];
+                  console.log(usersRow);
+                  return usersRow;
+                })
+            );
+        const postObject = { // new Post(
+          // id: posts.length + 1,
+          // text: post.text,
+          // user: user,
+          ...postInput
         }; //);
-        console.log("New post: ", postObject);
-        posts.push(<PostObject>postObject);
-        return postObject;
+        // console.log("New post: ", postObject);
+        // posts.push(<Post>postObject);
+        // return postObject;
+        return post.create(postObject)
+            .then((newPost: any) => {
+              return Promise.all([
+                 newPost.setUser(userInput.id)
+              ]).then(() => {
+                console.log("New post: ", newPost);
+                return newPost;
+              });
+            });
       }
     }
-    // Message: {
+    // message: {
     //   user (message, args, context) {
     //     return message.getUser();
     //   },
@@ -66,7 +100,7 @@ export default function Resolvers (this: {
     //     return message.getChat();
     //   },
     // },
-    // Chat: {
+    // chat: {
     //   messages (chat, args, context) {
     //     return chat.getMessages({
     //       order: [
@@ -80,23 +114,23 @@ export default function Resolvers (this: {
     // },
     // RootQuery: {
     //   posts (root: any, args: any, context: any) {
-    //     return PostObject.findAll({
+    //     return post.findAll({
     //       order: [
     //         [ 'createdAt', 'DESC' ]
     //       ]
     //     });
     //   },
     //   chats (root, args, context) {
-    //     return User.findAll().then((users) => {
+    //     return user.findAll().then((users) => {
     //       if (!users.length) {
     //         return [];
     //       }
     //
     //       const usersRow = users[0];
     //
-    //       return Chat.findAll({
+    //       return chat.findAll({
     //         include: [ {
-    //           model: User,
+    //           model: user,
     //           required: true,
     //           through: {
     //             where: {
@@ -105,7 +139,7 @@ export default function Resolvers (this: {
     //           },
     //         },
     //           {
-    //             model: Message,
+    //             model: message,
     //           }
     //         ],
     //       });
@@ -114,13 +148,13 @@ export default function Resolvers (this: {
     //   chat (root, {
     //     chatId
     //   }, context) {
-    //     return Chat.findByPk(chatId, {
+    //     return chat.findByPk(chatId, {
     //       include: [ {
-    //         model: User,
+    //         model: user,
     //         required: true,
     //       },
     //         {
-    //           model: Message,
+    //           model: message,
     //         }
     //       ],
     //     });
@@ -130,13 +164,13 @@ export default function Resolvers (this: {
     //   addChat (root, {
     //     chat
     //   }, context) {
-    //     return Chat.create().then((newChat) => {
+    //     return chat.create().then((newChat) => {
     //       return Promise.all([
     //         newChat.setUsers(chat.users),
     //       ]).then(() => {
     //         console.log({
     //           level: 'info',
-    //           message: 'Chat was created',
+    //           message: 'chat was created',
     //         });
     //         return newChat;
     //       });
@@ -145,10 +179,10 @@ export default function Resolvers (this: {
     //   addMessage (root, {
     //     message
     //   }, context) {
-    //     return User.findAll().then((users) => {
+    //     return user.findAll().then((users) => {
     //       const usersRow = users[0];
     //
-    //       return Message.create({
+    //       return message.create({
     //         ...message,
     //       }).then((newMessage) => {
     //         return Promise.all([
@@ -157,7 +191,7 @@ export default function Resolvers (this: {
     //         ]).then(() => {
     //           console.log({
     //             level: 'info',
-    //             message: 'Message was created',
+    //             message: 'message was created',
     //           });
     //           return newMessage;
     //         });
@@ -167,10 +201,10 @@ export default function Resolvers (this: {
     //   addPost (root, {
     //     post
     //   }, context) {
-    //     return User.findAll().then((users) => {
+    //     return user.findAll().then((users) => {
     //       const usersRow = users[0];
     //
-    //       return PostObject.create({
+    //       return post.create({
     //         ...post,
     //       }).then((newPost) => {
     //         return Promise.all([
@@ -178,7 +212,7 @@ export default function Resolvers (this: {
     //         ]).then(() => {
     //           console.log({
     //             level: 'info',
-    //             message: 'PostObject was created',
+    //             message: 'post was created',
     //           });
     //           return newPost;
     //         });

@@ -16,7 +16,7 @@ var port = pgtokens[1];
 var dbname = pgtokens[2];
 var username = pgtokens[3];
 var password = pgtokens[4];
-console.log("PostgreSQL connection token gathered from pgpass:", {
+console.log("PostgreSQL connection tokens gathered from pgpass:", {
     host: host,
     port: port,
     dbname: dbname,

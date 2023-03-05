@@ -72,7 +72,11 @@ class PostTable extends React.Component {
                                 {this.columns.map((col) =>
                                     (col.match("user-post") !== null) ?
                                         <TableCell key={col.toString()}>{this.getLabel(col)}</TableCell> :
-                                        <TableCell align="right" key={col.toString()}>{this.getLabel(col)}</TableCell>
+                                        <TableCell align="right" key={col.toString()}>{
+                                            (col.match("user-avatar") !== null) ?
+                                                <img src={this.getLabel(col)} width="50" height="50" /> :
+                                                this.getLabel(col)
+                                        }</TableCell>
                                 )}
                             </TableRow> :
                             <TableRow></TableRow>
@@ -108,17 +112,18 @@ function PostsFeed (props) {
         <div className="content">
             {(posts !== null && posts.length > 0) ?
                 <div className="feed">
-                    <Table></Table>
                     { posts.map((post, i) => {
 
                         const
-                            table_columns = [ "user-post" ],
+                            table_columns = [ "user-post", "user-avatar" ],
                             table_labels = {
-                                "user-post": post.user.username
+                                "user-post": post.user.username,
+                                "user-avatar": post.user.avatar || "images/party.gif"
                             },
                             table_rows = [
                                 {
-                                    "user-post": post.text
+                                    "user-post": post.text,
+                                    // "user-avatar": post.user.avatar || "images/party.gif"
                                 }
                             ];
 

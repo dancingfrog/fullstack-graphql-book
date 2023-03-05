@@ -8,12 +8,11 @@ export default class Post {
         this.id = id;
         this.text = text;
         this.user = user;
+        this.getUser = () => this.user;
     }
     public id: number;
     public text: string;
     public user: User;
 
-    getUser () {
-        return this.user;
-    }
+    public getUser: () => User;
 }

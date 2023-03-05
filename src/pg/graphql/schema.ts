@@ -2,36 +2,37 @@ import { gql } from "apollo-server";
 
 export default // [
   gql`
-    type User {
+    type user {
       id: Int
       avatar: String
       username: String
     }
 
-    type Post {
+    type post {
       id: Int
       text: String
-      user: User
+      user: user
     }
   
     type RootQuery {
-      posts: [Post]
+      posts: [post]
+      users: [user]
     }
     
-    input PostInput {
+    input postInput {
       text: String!
     }
     
-    input UserInput {
+    input userInput {
       username: String!
       avatar: String!
     }
     
     type RootMutation {
       addPost (
-        post: PostInput!
-        user: UserInput!
-      ): Post
+        post: postInput!
+        user: userInput
+      ): post
     }
   
     schema {
@@ -40,60 +41,60 @@ export default // [
     }
   `; //,
   // gql`
-  //   type User {
+  //   type user {
   //     id: Int
   //     avatar: String
   //     username: String
   //   }
   //
-  //   type Post {
+  //   type post {
   //     id: Int
   //     text: String
-  //     user: User
+  //     user: user
   //   }
   //
-  //   type Message {
+  //   type message {
   //     id: Int
   //     text: String
-  //     chat: Chat
-  //     user: User
+  //     chat: chat
+  //     user: user
   //   }
   //
-  //   type Chat {
+  //   type chat {
   //     id: Int
-  //     messages: [Message]
-  //     users: [User]
+  //     messages: [message]
+  //     users: [user]
   //   }
   //
   //   type RootQuery {
-  //     posts: [Post]
-  //     chats: [Chat]
-  //     chat(chatId: Int): Chat
+  //     posts: [post]
+  //     chats: [chat]
+  //     chat(chatId: Int): chat
   //   }
   //
-  //   input PostInput {
+  //   input postInput {
   //     text: String!
   //   }
   //
-  //   input ChatInput {
+  //   input chatInput {
   //     users: [Int]
   //   }
   //
-  //   input MessageInput {
+  //   input messageInput {
   //     text: String!
   //     chatId: Int!
   //   }
   //
   //   type RootMutation {
-  //     addPost (
-  //       post: PostInput!
-  //     ): Post
-  //     addChat (
-  //       chat: ChatInput!
-  //     ): Chat
-  //     addMessage (
-  //       message: MessageInput!
-  //     ): Message
+  //     addpost (
+  //       post: postInput!
+  //     ): post
+  //     addchat (
+  //       chat: chatInput!
+  //     ): chat
+  //     addmessage (
+  //       message: messageInput!
+  //     ): message
   //   }
   //
   //   schema {

@@ -7,16 +7,12 @@ import Schema from './schema';
 
 export default async function (utils: any): Promise<ApolloServer> {
 
-    const resolvers = Resolvers.call(utils);
-    const typeDefs = makeExecutableSchema({
-        typeDefs: Schema,
-        resolvers
-    });
-
     return new ApolloServer(
         {
-            typeDefs,
-            resolvers,
+            typeDefs: makeExecutableSchema({
+                typeDefs: Schema
+            }),
+            resolvers: Resolvers.call(utils),
             context: (context: { req: any /*Request*/, res: any /*Response*/ }) => {
                 // console.log("contextHandler req received: ", context.req);
                 // console.log("contextHandler res received: ", context.res);

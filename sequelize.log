@@ -1,0 +1,16 @@
+npm install --save sequelize pg pg-hstore
+npm install -g --save-dev sequelize-cli typescript
+npm run dev:model:generate:Post
+npm run dev:db:migrate
+npm run dev:seed:generate fake-posts
+npm run dev:db:seed:all
+npm run dev:model:generate:User
+npm run dev:db:migrate
+npm run dev:migration:create:userId
+npm run dev:db:migrate
+npm run dev:db:migrate:undo:all 20230304162653-add-userId-to-post.js
+npm run dev:db:migrate
+npm run dev:seed:generate fake-users
+npm run dev:db:migrate:undo:all 20230304162651-create-user.js
+npm run dev:db:migrate
+npm run dev:db:seed:all
